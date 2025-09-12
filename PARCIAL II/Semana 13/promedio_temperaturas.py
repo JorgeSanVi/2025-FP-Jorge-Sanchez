@@ -1,38 +1,85 @@
-# Función: promedios_por_ciudad
-# Entrada: diccionario { ciudad: [t_sem1, t_sem2, t_sem3, t_sem4] }
-# Salida: diccionario { ciudad: promedio_general }
+import tkinter as tk
+from tkinter import messagebox
 
-def promedios_por_ciudad(datos):
-    """
-    Calcula el promedio de temperaturas por ciudad.
-    :param datos: dict[str, list[float]]  ->  semanas por ciudad
-    :return: dict[str, float]             ->  promedio por ciudad
-    """
-    resultados = {}
-    for ciudad, semanas in datos.items():
-        if not semanas:
-            raise ValueError(f"La ciudad '{ciudad}' no tiene datos")
-        resultados[ciudad] = sum(semanas) / len(semanas)
-    return resultados
+datos = []  # lista para guardar temperaturas
 
+def agregar():
+    try:
+        valor = float(entrada.get())
+        datos.append(valor)
+        lista.insert(tk.END, valor)
+        entrada.delete(0, tk.END)
+    except ValueError:
+        messagebox.showerror("Error", "Ingrese un número válido")
 
-# --- Pruebas rápidas (3 ciudades x 4 semanas) ---
-if __name__ == "__main__":
-    datos = {
-        "Quito": [18, 20, 19, 17],
-        "Guayaquil": [28, 29, 30, 31],
-        "Cuenca": [16, 17, 18, 16]
-    }
+def eliminar():
+    seleccion = lista.curselection()
+    if seleccion:  # Si hay algo seleccionado, borra solo ese
+        index = seleccion[0]
+        lista.delete(index)
+        datos.pop(index)
+    else:  # Si no selecciona nada, limpia la lista completa
+        if datos:
+            lista.delete(0, tk.END)
+            datos.clear()
+        else:
+            messagebox.showwarning("Atención", "No hay datos para borrar")
 
-    r = promedios_por_ciudad(datos)
+def calcular():
+    if datos:
+        promedio = sum(datos) / len(datos)
+        lbl.config(text=f"🌡 Promedio: {promedio:.2f} °C")
+    else:
+        messagebox.showwarning("Atención", "No hay datos")
 
-    # Verificación básica
-    esperado = {"Quito": 18.5, "Guayaquil": 29.5, "Cuenca": 16.75}
-    for c in esperado:
-        assert abs(r[c] - esperado[c]) < 1e-9
+# Ventana
+ventana = tk.Tk()
+ventana.title("Gestión de Temperaturas")
+ventana.geometry("500x400")
+ventana.configure(bg="#f4f6f7")  # color de fondo suave
 
-    # Salida legible
-    print("Promedio de temperaturas por ciudad")
-    print("-----------------------------------")
-    for ciudad, prom in r.items():
-        print(f"{ciudad}: {prom:.2f} °C")
+# Etiqueta principal
+titulo = tk.Label(
+    ventana,
+    text="🌞 Promedio de Temperaturas 🌧",
+    font=("Arial Rounded MT Bold", 16),
+    bg="#f4f6f7",
+    fg="#2c3e50"
+)
+titulo.pack(pady=10)
+
+# Entrada
+entrada = tk.Entry(ventana, font=("Arial", 12), justify="center", bg="#eaf2f8")
+entrada.pack(pady=5)
+
+# Botones
+frame = tk.Frame(ventana, bg="#f4f6f7")
+frame.pack(pady=10)
+
+tk.Button(frame, text="➕ Agregar", command=agregar, bg="#58d68d", fg="white", font=("Arial", 11, "bold")).grid(row=0, column=0, padx=10)
+tk.Button(frame, text="🗑 Eliminar", command=eliminar, bg="#e74c3c", fg="white", font=("Arial", 11, "bold")).grid(row=0, column=1, padx=10)
+tk.Button(frame, text="📊 Calcular", command=calcular, bg="#5dade2", fg="white", font=("Arial", 11, "bold")).grid(row=0, column=2, padx=10)
+
+# Lista
+tk.Label(ventana, text="📋 Datos ingresados:", bg="#f4f6f7", fg="#2c3e50", font=("Arial", 12, "bold")).pack(pady=5)
+lista = tk.Listbox(
+    ventana,
+    width=35,
+    height=8,
+    bg="#fdfefe",
+    fg="#2c3e50",
+    font=("Arial", 11),
+    selectbackground="#3498db",
+    selectforeground="white",
+    relief="flat",
+    highlightthickness=2,
+    highlightbackground="#95a5a6",
+    highlightcolor="#3498db"
+)
+lista.pack(pady=5)
+
+# Resultado
+lbl = tk.Label(ventana, text="🌡 Promedio: -", font=("Arial", 13, "bold"), bg="#f4f6f7", fg="#1a5276")
+lbl.pack(pady=15)
+
+ventana.mainloop()
