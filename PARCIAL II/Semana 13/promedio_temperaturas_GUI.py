@@ -1,3 +1,8 @@
+# Tarea Individual: Desarrollo de Función para Calcular Temperaturas Promedio
+# Estudiante: Jorge Sánchez
+# Semana 13 - Fundamentos de Programación
+
+
 import tkinter as tk
 from tkinter import messagebox
 
