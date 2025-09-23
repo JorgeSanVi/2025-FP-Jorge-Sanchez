@@ -32,5 +32,6 @@ del informacion_personal["edad"]
 print(informacion_personal)
 
 # Paso 5: Imprimo el diccionario final
+# Verifiacacion final
 print("Diccionario final despues de todas las operaciones")
 print(informacion_personal)
